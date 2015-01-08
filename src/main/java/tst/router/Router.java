@@ -5,45 +5,84 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * Router that is responsible for the routes calculation. 
+ */
 public class Router {
+	private static final Logger logger = LoggerFactory.getLogger(Router.class);
+	
+	private List<Segment> segments;
 
-	private static List<Route> routes;
-
-	public static void main(String[] args) throws IOException {
-		
-		String dataFile = "data.txt";
-		
-		Router ferry = new Router();
-		routes = ferry.loadRoutes(dataFile);
-		System.out.println("Ferry.main(): routes"+ routes); //TODO: use logger
-		String[] trip = new String[]{};
-		//List<Route> matched = ferry.getRoutes(trip);
-		
+	/**
+	 * Creates new instance.
+	 * @param segments segments
+	 */
+	public Router(List<Segment> segments) {
+		this.segments = segments;
 	}
 
-	private List<Route> getRoutes(String[] stops) {
+	/**
+	 * Creates new instance.
+	 * @param dataFile comma separated data file
+	 */
+	public Router(String dataFile) {
+		this.segments = loadSegments(dataFile);
+	}
+
+	/**
+	 * Returns the route as a list of segments. 
+	 * @param stops list of stops
+	 * @return route
+	 */
+	public List<Segment> getRoute(String[] stops) {
 		
-		Stack<Route> stack = new Stack<Route>();
-		Route candidate = null;
-		for (String stop : stops) {
-			if (candidate != null && stop.equals(candidate.getDestination())) {
-				
+		List<Segment> route = new ArrayList<Segment>();
+		
+		for (int i = 0; i < stops.length - 1; i++) {
+			
+			String start = stops[i];
+			String destination = stops[i + 1];
+			Segment segment = findByStartAndDestination(start, destination);
+			
+			if (segment == null) {
+				//if there is no segment found then discard any previosly found ones
+				return null;
 			}
-			Route route = findByStart(stop);
-			if (route != null) {
-				candidate = route;
-			}
+			
+			route.add(segment);
 		}
-		List<Route> matched = new ArrayList<Route>();
-		return matched ;
+		
+		return route ;
 	}
 
-	private Route findByStart(String start) {
+	/**
+	 * Returns the total duration of the route.
+	 * @param segments
+	 * @return total duration of the route.
+	 */
+	public static long getTotalDuration(List<Segment> segments) {
 		
-		for (Route route : routes) {
-			if (start.equals(route.getStart())) {
+		long duration = 0;
+		for (Segment route : segments) {
+			duration += route.getDuration(); 
+		}
+		return duration;
+	}
+	
+	/**
+	 * Returns the segment matching the start and destination points.
+	 * @param start
+	 * @param destination
+	 * @return matching segment 
+	 */
+	private Segment findByStartAndDestination(String start, String destination) {
+		
+		for (Segment route : segments) {
+			if (start.equals(route.getStart()) && destination.equals(route.getDestination())) {
 				return route;
 			}
 		}
@@ -51,8 +90,13 @@ public class Router {
 		return null;
 	}
 
-	private List<Route> loadRoutes(String dataFile) {
-		List<Route> routes = new ArrayList<Route>();
+	/**
+	 * Loads segments from the comma separated data file.
+	 * @param dataFile
+	 * @return loaded segments
+	 */
+	private List<Segment> loadSegments(String dataFile) {
+		List<Segment> routes = new ArrayList<Segment>();
 		
 		BufferedReader br = null;
 		try {
@@ -60,11 +104,12 @@ public class Router {
 			br = new BufferedReader(new FileReader(dataFile));
 			String line = null;
 			while ((line = br.readLine()) != null) {
-				String[] words = line.split(","); //TODO: better handling of the separator
+				String[] words = line.split(","); //TODO: better handling of the separator?
 				if (words.length == 3) {
-					Route route = new Route(words[0], words[1],
-							Long.parseLong(words[2]));
+					Segment route = new Segment(words[0], words[1], Long.parseLong(words[2]));
 					routes.add(route);
+				} else {
+					logger.warn("Incorrect format. Skipping the input data line: "+ line);
 				}
 			}
 		} catch (Exception e) {
@@ -74,13 +119,12 @@ public class Router {
 				try {
 					br.close();
 				} catch (IOException e) {
-					// TODO: use logger
-					e.printStackTrace();
+					logger.error("Failed to close the reader", e);
 				}
 			}
 		}
 		
 		return routes;
 	}
-
+	
 }
