@@ -3,6 +3,7 @@ package tst.router;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
@@ -58,7 +59,9 @@ public class RouterTest {
 	@Test
 	public void testGetRoutes6_Southernmost_Point_with_3_stops() {
 		
-		List<Route> routes = router.getRoutes("Southernmost Point", "Southernmost Point");
+		String start = "Southernmost Point";
+		String destination = start;
+		List<Route> routes = router.getRoutes(start, destination);
 		if (logger.isDebugEnabled()) {
 			logger.debug("testGetRoutes6_Southernmost_Point_with_3_stops: routes="+ routes);
 		}
@@ -70,9 +73,29 @@ public class RouterTest {
 		assertNotNull("Expected not null segments", route.getSegments());
 		assertEquals("Expected segments number to match", 2, route.getSegments().size());
 		
-		assertEquals("Expected stop 1 to match", "Southernmost Point", route.getSegments().get(0).getStart());
+		assertEquals("Expected stop 1 to match", start, route.getSegments().get(0).getStart());
 		assertEquals("Expected stop 2 to match", "Sigsbee Park", route.getSegments().get(0).getDestination());
-		assertEquals("Expected stop 3 to match", "Southernmost Point", route.getSegments().get(1).getDestination());
+		assertEquals("Expected stop 3 to match", destination, route.getSegments().get(1).getDestination());
+	}
+
+	@Test
+	public void testGetRoutes7_Wisteria_Island_Sigsbee_Park_with_4_stops() {
+		
+		String start = "Wisteria Island";
+		String destination = "Sigsbee Park";
+		List<Route> routes = router.getRoutes(start, destination);
+		if (logger.isDebugEnabled()) {
+			logger.debug("testGetRoutes7_Wisteria_Island_Sigsbee_Park_with_4_stops: routes="+ routes);
+		}
+		assertNotNull("Expected not null routes", routes);
+		assertEquals("Expected routes number to match", 3, routes.size());
+		for (Route route : routes) {
+			List<Segment> segments = route.getSegments();
+			assertNotNull("Expected not null segments", segments);
+			assertTrue("Expected specific segments number", segments.size() > 1); //TODO: needs to be a specific number
+			assertEquals("Expected start to match", start, segments.get(0).getStart());
+			assertEquals("Expected destination to match", destination, segments.get(segments.size() - 1).getDestination());
+		}
 	}
 	
 	private void testRoute(String[] trip, int expectedSegmentsNumber, long expectedDuration) {

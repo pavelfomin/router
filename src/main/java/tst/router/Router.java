@@ -97,16 +97,14 @@ public class Router {
 					//the candidate contains the route matching the destination
 					//add the route to the list 
 					addRoute(candidate, routes);
-					break;
 				} else {
-					//make a recursive call to traverce this route futher
+					//make a recursive call to traverse this route futher
 					candidate = getRoutes(routes, candidate, segment.getDestination(), destination, recursionLevel + 1);
 				}
+				//remove last segment from the candidate
+				candidate.remove(candidate.size() - 1);
 			}
 		}
-
-		//reset one segment of the candidate
-		candidate.remove(candidate.size() - 1);
 
 		return candidate;
 	}
