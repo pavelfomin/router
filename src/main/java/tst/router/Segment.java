@@ -38,7 +38,7 @@ public class Segment {
 	
 	@Override
 	public String toString() {
-		return String.format("Route [start=%s, destination=%s, duration=%s]",
+		return String.format("Segment [start=%s, destination=%s, duration=%s]",
 				start, destination, duration);
 	}
 	

@@ -38,4 +38,10 @@ public class Route {
 	private void setSegments(List<Segment> segments) {
 		this.segments = segments;
 	}
+
+	@Override
+	public String toString() {
+		return String.format("Route [segments=%s]", segments);
+	}
+	
 }

@@ -60,6 +60,64 @@ public class Router {
 	}
 
 	/**
+	 * Returns all of the routes for a given starting point and a destination.
+	 * @param start starting point
+	 * @param destination destination
+	 * @return routes
+	 */
+	public List<Route> getRoutes(String start, String destination) {
+		
+		List<Route> routes = new ArrayList<Route>();
+		List<Segment> candidate = new ArrayList<Segment>();
+		
+		//traverse the routes recursively
+		getRoutes(routes, candidate, start, destination, 0);
+		
+		return routes;
+	}
+
+	/**
+	 * Builds the routes recursively for a given starting point and a destination.
+	 * 
+	 * @param routes list of routes
+	 * @param candidate route candidate
+	 * @param start starting point
+	 * @param destination destination
+	 * @param recursionLevel level of recursion
+	 * @return updated candidate
+	 */
+	private List<Segment> getRoutes(List<Route> routes, List<Segment> candidate, String start, String destination, int recursionLevel) {
+		
+		for (Segment segment : segments) {
+			if (start.equals(segment.getStart())) {
+				//add segment to the candidate route stack
+				candidate.add(segment);
+				
+				if (destination.equals(segment.getDestination())) {
+					//the candidate contains the route matching the destination
+					//add the route to the list 
+					addRoute(candidate, routes);
+					break;
+				} else {
+					//make a recursive call to traverce this route futher
+					candidate = getRoutes(routes, candidate, segment.getDestination(), destination, recursionLevel + 1);
+				}
+			}
+		}
+
+		//reset one segment of the candidate
+		candidate.remove(candidate.size() - 1);
+
+		return candidate;
+	}
+
+	private void addRoute(List<Segment> candidate, List<Route> routes) {
+
+		List<Segment> segments = new ArrayList<Segment>(candidate);
+		routes.add(new Route(segments));
+	}
+
+	/**
 	 * Returns the segment matching the start and destination points.
 	 * @param start
 	 * @param destination

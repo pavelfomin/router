@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -17,9 +19,6 @@ public class RouterTest {
     @Before
     public void before() {
     	router = new Router("data.txt");
-    	if (logger.isDebugEnabled()) {
-			logger.debug("before: router="+ router);
-		}
     }
 	
 	@Test
@@ -55,6 +54,26 @@ public class RouterTest {
 		}
 		assertNull("Expected null route", route);
 	}
+
+	@Test
+	public void testGetRoutes6_Southernmost_Point_with_3_stops() {
+		
+		List<Route> routes = router.getRoutes("Southernmost Point", "Southernmost Point");
+		if (logger.isDebugEnabled()) {
+			logger.debug("testGetRoutes6_Southernmost_Point_with_3_stops: routes="+ routes);
+		}
+		assertNotNull("Expected not null routes", routes);
+		assertEquals("Expected routes number to match", 1, routes.size());
+		
+		Route route = routes.get(0);
+		assertNotNull("Expected not null route", route);
+		assertNotNull("Expected not null segments", route.getSegments());
+		assertEquals("Expected segments number to match", 2, route.getSegments().size());
+		
+		assertEquals("Expected stop 1 to match", "Southernmost Point", route.getSegments().get(0).getStart());
+		assertEquals("Expected stop 2 to match", "Sigsbee Park", route.getSegments().get(0).getDestination());
+		assertEquals("Expected stop 3 to match", "Southernmost Point", route.getSegments().get(1).getDestination());
+	}
 	
 	private void testRoute(String[] trip, int expectedSegmentsNumber, long expectedDuration) {
 		
@@ -65,7 +84,7 @@ public class RouterTest {
 		}
 		assertNotNull("Expected not null route", route);
 		assertNotNull("Expected not null segments", route.getSegments());
-		assertEquals("Expected to segments number to match", expectedSegmentsNumber, route.getSegments().size());
+		assertEquals("Expected segments number to match", expectedSegmentsNumber, route.getSegments().size());
 		assertEquals("Expected total duration to match", expectedDuration, duration);
 	}
 
