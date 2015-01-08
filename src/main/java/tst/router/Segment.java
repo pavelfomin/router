@@ -1,5 +1,8 @@
 package tst.router;
 
+/**
+ * Route segment. 
+ */
 public class Segment {
 
 	private String start;
@@ -7,9 +10,9 @@ public class Segment {
 	private long duration;
 	
 	public Segment(String start, String destination, long duration) {
-		this.start = start;
-		this.destination = destination;
-		this.duration = duration;
+		setStart(start);
+		setDestination(destination);
+		setDuration(duration);
 	}
 	
 	public String getStart() {

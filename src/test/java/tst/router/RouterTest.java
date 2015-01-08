@@ -4,8 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -51,7 +49,7 @@ public class RouterTest {
 	@Test
 	public void testRoute5_Eastside_tour() {
 		
-		List<Segment> route = router.getRoute(new String[]{"Wisteria Island", "Sunset Key", "Southernmost Point"});
+		Route route = router.getRoute(new String[]{"Wisteria Island", "Sunset Key", "Southernmost Point"});
 		if (logger.isDebugEnabled()) {
 			logger.debug("testRoute: route="+ route);
 		}
@@ -60,13 +58,14 @@ public class RouterTest {
 	
 	private void testRoute(String[] trip, int expectedSegmentsNumber, long expectedDuration) {
 		
-		List<Segment> route = router.getRoute(trip);
-		long duration = Router.getTotalDuration(route);
+		Route route = router.getRoute(trip);
+		long duration = route.getTotalDuration();
 		if (logger.isDebugEnabled()) {
 			logger.debug("testRoute: route="+ route);
 		}
 		assertNotNull("Expected not null route", route);
-		assertEquals("Expected to segments number to match", expectedSegmentsNumber, route.size());
+		assertNotNull("Expected not null segments", route.getSegments());
+		assertEquals("Expected to segments number to match", expectedSegmentsNumber, route.getSegments().size());
 		assertEquals("Expected total duration to match", expectedDuration, duration);
 	}
 

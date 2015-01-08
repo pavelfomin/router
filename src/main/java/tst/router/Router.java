@@ -38,9 +38,9 @@ public class Router {
 	 * @param stops list of stops
 	 * @return route
 	 */
-	public List<Segment> getRoute(String[] stops) {
+	public Route getRoute(String[] stops) {
 		
-		List<Segment> route = new ArrayList<Segment>();
+		List<Segment> segments = new ArrayList<Segment>();
 		
 		for (int i = 0; i < stops.length - 1; i++) {
 			
@@ -53,26 +53,12 @@ public class Router {
 				return null;
 			}
 			
-			route.add(segment);
+			segments.add(segment);
 		}
 		
-		return route ;
+		return new Route(segments) ;
 	}
 
-	/**
-	 * Returns the total duration of the route.
-	 * @param segments
-	 * @return total duration of the route.
-	 */
-	public static long getTotalDuration(List<Segment> segments) {
-		
-		long duration = 0;
-		for (Segment route : segments) {
-			duration += route.getDuration(); 
-		}
-		return duration;
-	}
-	
 	/**
 	 * Returns the segment matching the start and destination points.
 	 * @param start
