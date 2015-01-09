@@ -39,6 +39,27 @@ public class Route {
 		this.segments = segments;
 	}
 
+	/**
+	 * Returns nicely formatted string representation.
+	 * @return nicely formatted string representation
+	 */
+	public String toFormattedString() {
+
+		StringBuilder sb = null;
+		for (Segment segment : segments) {
+			if (sb == null) {
+				sb = new StringBuilder();
+				sb.append(segment.getStart());
+			} else {
+				sb.append(" -> ").append(segment.getDestination());
+			}
+		}
+		
+		sb.append(": ").append(getTotalDuration());
+		
+		return sb.toString();
+	}
+
 	@Override
 	public String toString() {
 		return String.format("Route [segments=%s]", segments);
