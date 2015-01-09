@@ -89,7 +89,8 @@ public class Router {
 	private List<Segment> getRoutes(List<Route> routes, List<Segment> candidate, String start, String destination, int recursionLevel) {
 		
 		for (Segment segment : segments) {
-			if (start.equals(segment.getStart())) {
+			//if the segment's start point matches and the segment is not already part of the candidate route
+			if (start.equals(segment.getStart()) && (! candidate.contains(segment))) {
 				//add segment to the candidate route stack
 				candidate.add(segment);
 				

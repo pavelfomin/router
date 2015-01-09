@@ -66,16 +66,25 @@ public class RouterTest {
 			logger.debug("testGetRoutes6: routes="+ routes);
 		}
 		assertNotNull("Expected not null routes", routes);
-		assertEquals("Expected routes number to match", 1, routes.size());
+		assertEquals("Expected routes number to match", 2, routes.size());
 		
-		Route route = routes.get(0);
-		assertNotNull("Expected not null route", route);
-		assertNotNull("Expected not null segments", route.getSegments());
-		assertEquals("Expected segments number to match", 2, route.getSegments().size());
+		int with3stops = 0;
+		for (Route route : routes) {
+			List<Segment> segments = route.getSegments();
+			if (segments.size() == 2) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("testGetRoutes6: 3 stops route="+ routes);
+				}
+				assertNotNull("Expected not null route", route);
+				assertNotNull("Expected not null segments", segments);
+				
+				assertEquals("Expected start to match", start, segments.get(0).getStart());
+				assertEquals("Expected destination to match", destination, segments.get(segments.size() - 1).getDestination());
+				with3stops++;
+			}
+		}
 		
-		assertEquals("Expected stop 1 to match", start, route.getSegments().get(0).getStart());
-		assertEquals("Expected stop 2 to match", "Sigsbee Park", route.getSegments().get(0).getDestination());
-		assertEquals("Expected stop 3 to match", destination, route.getSegments().get(1).getDestination());
+		assertEquals("Expected routes number to match", 1, with3stops);
 	}
 
 	@Test
@@ -88,14 +97,25 @@ public class RouterTest {
 			logger.debug("testGetRoutes7: routes="+ routes);
 		}
 		assertNotNull("Expected not null routes", routes);
-		assertEquals("Expected routes number to match", 3, routes.size());
+		assertEquals("Expected routes number to match", 4, routes.size());
+		
+		int with4stops = 0;
 		for (Route route : routes) {
 			List<Segment> segments = route.getSegments();
-			assertNotNull("Expected not null segments", segments);
-			assertTrue("Expected specific segments number", segments.size() > 1); //TODO: needs to be a specific number
-			assertEquals("Expected start to match", start, segments.get(0).getStart());
-			assertEquals("Expected destination to match", destination, segments.get(segments.size() - 1).getDestination());
+			if (segments.size() == 4) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("testGetRoutes7: 4 stops route="+ routes);
+				}
+				assertNotNull("Expected not null route", route);
+				assertNotNull("Expected not null segments", segments);
+				
+				assertEquals("Expected start to match", start, segments.get(0).getStart());
+				assertEquals("Expected destination to match", destination, segments.get(segments.size() - 1).getDestination());
+				with4stops++;
+			}
 		}
+		
+		assertEquals("Expected routes number to match", 1, with4stops);
 	}
 
 	@Test
@@ -107,20 +127,12 @@ public class RouterTest {
 		if (logger.isDebugEnabled()) {
 			logger.debug("testGetRoutes8: routes="+ routes);
 		}
-		assertNotNull("Expected not null routes", routes);
-		assertEquals("Expected routes number to match", 3, routes.size());
 		
 		Route shortest = null;
 		for (Route route : routes) {
 			if (shortest == null || shortest.getTotalDuration() > route.getTotalDuration()) {
 				shortest = route;
 			}
-			
-			List<Segment> segments = route.getSegments();
-			assertNotNull("Expected not null segments", segments);
-			assertTrue("Expected specific segments number", segments.size() > 1);
-			assertEquals("Expected start to match", start, segments.get(0).getStart());
-			assertEquals("Expected destination to match", destination, segments.get(segments.size() - 1).getDestination());
 		}
 		
 		if (logger.isDebugEnabled()) {
@@ -131,6 +143,33 @@ public class RouterTest {
 		assertNotNull("Expected not null segments", shortest.getSegments());
 		assertEquals("Expected segments number to match", 2, shortest.getSegments().size());
 		assertEquals("Expected total duration to match", 18, shortest.getTotalDuration());
+	}
+
+	@Test
+	public void testGetRoutes9_shortest_trip_Fleming_Key() {
+		
+		String start = "Fleming Key";
+		String destination = start;
+		List<Route> routes = router.getRoutes(start, destination);
+		if (logger.isDebugEnabled()) {
+			logger.debug("testGetRoutes9: routes="+ routes);
+		}
+		
+		Route shortest = null;
+		for (Route route : routes) {
+			if (shortest == null || shortest.getTotalDuration() > route.getTotalDuration()) {
+				shortest = route;
+			}
+		}
+		
+		if (logger.isDebugEnabled()) {
+			logger.debug("testGetRoutes9: shortest="+ shortest);
+		}
+		
+		assertNotNull("Expected not null route", shortest);
+		assertNotNull("Expected not null segments", shortest.getSegments());
+		assertEquals("Expected segments number to match", 4, shortest.getSegments().size());
+		assertEquals("Expected total duration to match", 63, shortest.getTotalDuration());
 	}
 	
 	private void testRoute(String[] trip, int expectedSegmentsNumber, long expectedDuration) {

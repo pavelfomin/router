@@ -3,6 +3,6 @@ Sigsbee Park,Southernmost Point,20
 Fleming Key,Sigsbee Park,8
 Wisteria Island,Fleming Key,10
 Wisteria Island,Sunset Key,5
-Southermost Point,Sunset Key,10
+Southernmost Point,Sunset Key,10
 Sunset Key,Fleming Key,25
 Wisteria Island,Southernmost Point,25
