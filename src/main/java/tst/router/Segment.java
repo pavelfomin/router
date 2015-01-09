@@ -1,7 +1,7 @@
 package tst.router;
 
 /**
- * Route segment. 
+ * Route segment with a starting point, destination and duration. 
  */
 public class Segment {
 

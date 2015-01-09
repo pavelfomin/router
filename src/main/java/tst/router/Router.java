@@ -70,7 +70,7 @@ public class Router {
 		List<Route> routes = new ArrayList<Route>();
 		List<Segment> candidate = new ArrayList<Segment>();
 		
-		//traverse the routes recursively
+		//traverse the routes recursively and store all found routes in the list passed in
 		getRoutes(routes, candidate, start, destination, 0);
 		
 		return routes;
@@ -79,8 +79,8 @@ public class Router {
 	/**
 	 * Builds the routes recursively for a given starting point and a destination.
 	 * 
-	 * @param routes list of routes
-	 * @param candidate route candidate
+	 * @param routes list of routes which will be updated
+	 * @param candidate route candidate which is updated between the recursive calls
 	 * @param start starting point
 	 * @param destination destination
 	 * @param recursionLevel level of recursion
@@ -96,8 +96,8 @@ public class Router {
 				
 				if (destination.equals(segment.getDestination())) {
 					//the candidate contains the route matching the destination
-					//add the route to the list 
-					addRoute(candidate, routes);
+					//create new route copying the candidate's segments add the route to the list 
+					routes.add(new Route(new ArrayList<Segment>(candidate)));
 				} else {
 					//make a recursive call to traverse this route futher
 					candidate = getRoutes(routes, candidate, segment.getDestination(), destination, recursionLevel + 1);
@@ -108,12 +108,6 @@ public class Router {
 		}
 
 		return candidate;
-	}
-
-	private void addRoute(List<Segment> candidate, List<Route> routes) {
-
-		List<Segment> segments = new ArrayList<Segment>(candidate);
-		routes.add(new Route(segments));
 	}
 
 	/**
