@@ -63,7 +63,7 @@ public class RouterTest {
 		String destination = start;
 		List<Route> routes = router.getRoutes(start, destination);
 		if (logger.isDebugEnabled()) {
-			logger.debug("testGetRoutes6_Southernmost_Point_with_3_stops: routes="+ routes);
+			logger.debug("testGetRoutes6: routes="+ routes);
 		}
 		assertNotNull("Expected not null routes", routes);
 		assertEquals("Expected routes number to match", 1, routes.size());
@@ -85,7 +85,7 @@ public class RouterTest {
 		String destination = "Sigsbee Park";
 		List<Route> routes = router.getRoutes(start, destination);
 		if (logger.isDebugEnabled()) {
-			logger.debug("testGetRoutes7_Wisteria_Island_Sigsbee_Park_with_4_stops: routes="+ routes);
+			logger.debug("testGetRoutes7: routes="+ routes);
 		}
 		assertNotNull("Expected not null routes", routes);
 		assertEquals("Expected routes number to match", 3, routes.size());
@@ -96,6 +96,41 @@ public class RouterTest {
 			assertEquals("Expected start to match", start, segments.get(0).getStart());
 			assertEquals("Expected destination to match", destination, segments.get(segments.size() - 1).getDestination());
 		}
+	}
+
+	@Test
+	public void testGetRoutes8_shortest_time_Wisteria_Island_Sigsbee_Park() {
+		
+		String start = "Wisteria Island";
+		String destination = "Sigsbee Park";
+		List<Route> routes = router.getRoutes(start, destination);
+		if (logger.isDebugEnabled()) {
+			logger.debug("testGetRoutes8: routes="+ routes);
+		}
+		assertNotNull("Expected not null routes", routes);
+		assertEquals("Expected routes number to match", 3, routes.size());
+		
+		Route shortest = null;
+		for (Route route : routes) {
+			if (shortest == null || shortest.getTotalDuration() > route.getTotalDuration()) {
+				shortest = route;
+			}
+			
+			List<Segment> segments = route.getSegments();
+			assertNotNull("Expected not null segments", segments);
+			assertTrue("Expected specific segments number", segments.size() > 1);
+			assertEquals("Expected start to match", start, segments.get(0).getStart());
+			assertEquals("Expected destination to match", destination, segments.get(segments.size() - 1).getDestination());
+		}
+		
+		if (logger.isDebugEnabled()) {
+			logger.debug("testGetRoutes8: shortest="+ shortest);
+		}
+		
+		assertNotNull("Expected not null route", shortest);
+		assertNotNull("Expected not null segments", shortest.getSegments());
+		assertEquals("Expected segments number to match", 2, shortest.getSegments().size());
+		assertEquals("Expected total duration to match", 18, shortest.getTotalDuration());
 	}
 	
 	private void testRoute(String[] trip, int expectedSegmentsNumber, long expectedDuration) {
