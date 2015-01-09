@@ -12,7 +12,7 @@
 	
 	<!-- Application Loggers -->
 	<logger name="tst.router">
-		<level value="debug" />
+		<level value="info" />
 	</logger>
 	
 	<!-- Root Logger -->
