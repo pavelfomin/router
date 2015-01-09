@@ -3,7 +3,6 @@ package tst.router;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
@@ -73,7 +72,7 @@ public class RouterTest {
 			List<Segment> segments = route.getSegments();
 			if (segments.size() == 2) {
 				if (logger.isDebugEnabled()) {
-					logger.debug("testGetRoutes6: 3 stops route="+ routes);
+					logger.debug("testGetRoutes6: 3 stops route="+ route);
 				}
 				assertNotNull("Expected not null route", route);
 				assertNotNull("Expected not null segments", segments);
@@ -104,7 +103,7 @@ public class RouterTest {
 			List<Segment> segments = route.getSegments();
 			if (segments.size() == 4) {
 				if (logger.isDebugEnabled()) {
-					logger.debug("testGetRoutes7: 4 stops route="+ routes);
+					logger.debug("testGetRoutes7: 4 stops route="+ route);
 				}
 				assertNotNull("Expected not null route", route);
 				assertNotNull("Expected not null segments", segments);
@@ -171,6 +170,36 @@ public class RouterTest {
 		assertEquals("Expected segments number to match", 4, shortest.getSegments().size());
 		assertEquals("Expected total duration to match", 63, shortest.getTotalDuration());
 	}
+
+	@Test
+	public void testGetRoutes10_Sigsbee_Park_less_than_hour() {
+		
+		String start = "Sigsbee Park";
+		String destination = start;
+		List<Route> routes = router.getRoutes(start, destination);
+		if (logger.isDebugEnabled()) {
+			logger.debug("testGetRoutes10: routes="+ routes);
+		}
+		
+		int lessThanHour = 0;
+		for (Route route : routes) {
+			List<Segment> segments = route.getSegments();
+			long totalDuration = route.getTotalDuration();
+			if (totalDuration < 60) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("testGetRoutes10: less than an hour route="+ route);
+				}
+				assertNotNull("Expected not null route", route);
+				assertNotNull("Expected not null segments", segments);
+				
+				assertEquals("Expected start to match", start, segments.get(0).getStart());
+				assertEquals("Expected destination to match", destination, segments.get(segments.size() - 1).getDestination());
+				lessThanHour++;
+			}
+		}
+		
+		assertEquals("Expected routes number to match", 1, lessThanHour);
+	}	
 	
 	private void testRoute(String[] trip, int expectedSegmentsNumber, long expectedDuration) {
 		
