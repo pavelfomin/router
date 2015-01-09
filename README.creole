@@ -1,1 +1,4 @@
 ==Router example
+Example of the routes creation from the given route segments.
+
+Usage: mvn test
