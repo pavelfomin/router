@@ -3,6 +3,9 @@ package tst.router;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,9 +31,10 @@ public class Router {
 	/**
 	 * Creates new instance.
 	 * @param dataFile comma separated data file
+	 * @param fromClasspath true if the datafile should be searched in the classpath, filesystem otherwise 
 	 */
-	public Router(String dataFile) {
-		this.segments = loadSegments(dataFile);
+	public Router(String dataFile, boolean fromClasspath) {
+		this.segments = loadSegments(dataFile, fromClasspath);
 	}
 
 	/**
@@ -129,19 +133,32 @@ public class Router {
 
 	/**
 	 * Loads segments from the comma separated data file.
-	 * @param dataFile
+	 * @param dataFile data file
+	 * @param fromClasspath true if the datafile should be searched in the classpath, filesystem otherwise 
 	 * @return loaded segments
 	 */
-	private List<Segment> loadSegments(String dataFile) {
+	private List<Segment> loadSegments(String dataFile, boolean fromClasspath) {
+		
 		List<Segment> routes = new ArrayList<Segment>();
 		
 		BufferedReader br = null;
 		try {
+			Reader reader = null;
+			if (fromClasspath) {
+				InputStream is = getClass().getClassLoader().getResourceAsStream(dataFile);
+				if (is == null) {
+					throw new IllegalArgumentException("Failed to locate data file: "+ dataFile +" in the classpath");
+				}
+				reader = new InputStreamReader(is);
+			} else {
+				reader = new FileReader(dataFile);
+			}
 			
-			br = new BufferedReader(new FileReader(dataFile));
+			br = new BufferedReader(reader);
+			
 			String line = null;
 			while ((line = br.readLine()) != null) {
-				String[] words = line.split(","); //TODO: better handling of the separator?
+				String[] words = line.split(",");
 				if (words.length == 3) {
 					Segment route = new Segment(words[0], words[1], Long.parseLong(words[2]));
 					routes.add(route);
@@ -150,7 +167,7 @@ public class Router {
 				}
 			}
 		} catch (Exception e) {
-			throw new RuntimeException("Failed to load data from file: "+ dataFile, e);
+			throw new IllegalArgumentException("Failed to load data from file: "+ dataFile, e);
 		} finally {
 			if (br != null) {
 				try {

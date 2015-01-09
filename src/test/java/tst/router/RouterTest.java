@@ -18,7 +18,7 @@ public class RouterTest {
 	
     @Before
     public void before() {
-    	router = new Router("data.txt");
+    	router = new Router("data/data.txt", true);
     }
 	
 	@Test
