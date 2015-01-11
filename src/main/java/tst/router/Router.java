@@ -100,10 +100,10 @@ public class Router {
 				
 				if (destination.equals(segment.getDestination())) {
 					//the candidate contains the route matching the destination
-					//create new route copying the candidate's segments add the route to the list 
+					//create new route using the candidate's segments and add the route to the list 
 					routes.add(new Route(new ArrayList<Segment>(candidate)));
 				} else {
-					//make a recursive call to traverse this route futher
+					//make a recursive call to traverse this route further
 					candidate = getRoutes(routes, candidate, segment.getDestination(), destination, recursionLevel + 1);
 				}
 				//remove last segment from the candidate
@@ -115,7 +115,7 @@ public class Router {
 	}
 
 	/**
-	 * Returns the segment matching the start and destination points.
+	 * Returns the segment matching the start and the destination point.
 	 * @param start
 	 * @param destination
 	 * @return matching segment 
@@ -167,7 +167,7 @@ public class Router {
 				}
 			}
 		} catch (Exception e) {
-			throw new IllegalArgumentException("Failed to load data from file: "+ dataFile, e);
+			throw new IllegalArgumentException("Failed to load the data from the file: "+ dataFile, e);
 		} finally {
 			if (br != null) {
 				try {
